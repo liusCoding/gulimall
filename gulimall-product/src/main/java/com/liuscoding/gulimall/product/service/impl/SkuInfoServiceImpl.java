@@ -1,21 +1,21 @@
 package com.liuscoding.gulimall.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liuscoding.common.utils.PageUtils;
 import com.liuscoding.common.utils.Query;
-
 import com.liuscoding.gulimall.product.dao.SkuInfoDao;
 import com.liuscoding.gulimall.product.entity.SkuInfoEntity;
 import com.liuscoding.gulimall.product.service.SkuInfoService;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 
 @Service("skuInfoService")
@@ -51,6 +51,14 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
         IPage<SkuInfoEntity> page = this.page(new Query<SkuInfoEntity>().getPage(params), lambdaQuery);
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<SkuInfoEntity> getSkusBySpuId(Long spuId) {
+
+        LambdaQueryWrapper<SkuInfoEntity> skuWrapper = Wrappers.lambdaQuery();
+        return this.list(skuWrapper.eq(SkuInfoEntity::getSpuId, spuId));
+
     }
 
 }

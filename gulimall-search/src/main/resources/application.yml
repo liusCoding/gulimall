@@ -1,0 +1,12 @@
+spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: root
+#    password: root
+#    url: jdbc:mysql://120.79.185.188:3306/gulimall_ums?characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8
+  application:
+    name: gulimall-search
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848

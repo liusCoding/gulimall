@@ -13,5 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface WareSkuDao extends BaseMapper<WareSkuEntity> {
-	
+
+    Long getSkuStock(Long skuId);
 }

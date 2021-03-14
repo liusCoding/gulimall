@@ -2,11 +2,18 @@ package com.liuscoding.gulimall.ware.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.liuscoding.common.utils.PageUtils;
+import com.liuscoding.common.utils.Query;
 import com.liuscoding.common.utils.R;
+import com.liuscoding.gulimall.ware.dao.WareSkuDao;
+import com.liuscoding.gulimall.ware.entity.WareSkuEntity;
 import com.liuscoding.gulimall.ware.feign.ProductFeignService;
+import com.liuscoding.gulimall.ware.service.WareSkuService;
+import com.liuscoding.gulimall.ware.vo.SkuHasStockVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,20 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.liuscoding.common.utils.PageUtils;
-import com.liuscoding.common.utils.Query;
-
-import com.liuscoding.gulimall.ware.dao.WareSkuDao;
-import com.liuscoding.gulimall.ware.entity.WareSkuEntity;
-import com.liuscoding.gulimall.ware.service.WareSkuService;
+import java.util.stream.Collectors;
 
 
 @Service("wareSkuService")
 public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> implements WareSkuService {
+
     @Autowired
     ProductFeignService productFeignService;
     
@@ -93,6 +92,23 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         }
 
 
+    }
+
+    @Override
+    public List<SkuHasStockVo> getSkusHasStock(List<Long> skuIds) {
+        //逐一检查
+        List<SkuHasStockVo> collect = skuIds.stream().map(skuId -> {
+            SkuHasStockVo vo = new SkuHasStockVo();
+            //查询当前sku的库存量
+            //SELECT SUM(stock-stock_locked) FROM `wms_ware_sku` WHERE sku_id=1
+            Long count = baseMapper.getSkuStock(skuId); //获取每一个sku的库存总量
+            //按照这个计数count，就会判断是否有库存
+            vo.setSkuId(skuId);
+            vo.setHasStock(count==null?false:count>0); //有库存
+            return vo;
+        }).collect(Collectors.toList());
+
+        return collect;
     }
 
 }

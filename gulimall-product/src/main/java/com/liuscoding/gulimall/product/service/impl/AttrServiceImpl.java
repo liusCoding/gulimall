@@ -1,17 +1,25 @@
 package com.liuscoding.gulimall.product.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.liuscoding.common.constant.ProductConstant;
+import com.liuscoding.common.utils.PageUtils;
+import com.liuscoding.common.utils.Query;
 import com.liuscoding.gulimall.product.dao.AttrAttrgroupRelationDao;
+import com.liuscoding.gulimall.product.dao.AttrDao;
 import com.liuscoding.gulimall.product.dao.AttrGroupDao;
 import com.liuscoding.gulimall.product.dao.CategoryDao;
 import com.liuscoding.gulimall.product.entity.AttrAttrgroupRelationEntity;
+import com.liuscoding.gulimall.product.entity.AttrEntity;
 import com.liuscoding.gulimall.product.entity.AttrGroupEntity;
 import com.liuscoding.gulimall.product.entity.CategoryEntity;
 import com.liuscoding.gulimall.product.service.AttrAttrgroupRelationService;
+import com.liuscoding.gulimall.product.service.AttrService;
 import com.liuscoding.gulimall.product.service.CategoryService;
 import com.liuscoding.gulimall.product.vo.AttrGroupRelationVo;
 import com.liuscoding.gulimall.product.vo.AttrRespVo;
@@ -20,23 +28,12 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.liuscoding.common.utils.PageUtils;
-import com.liuscoding.common.utils.Query;
-
-import com.liuscoding.gulimall.product.dao.AttrDao;
-import com.liuscoding.gulimall.product.entity.AttrEntity;
-import com.liuscoding.gulimall.product.service.AttrService;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("attrService")
@@ -243,6 +240,14 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         }).collect(Collectors.toList());
 
         relationDao.deleteBatchRelation(relations);
+    }
+
+    @Override
+    public List<Long> selectSearchAttrIds(List<Long> attrIds) {
+        /**
+         * SELECT attr_id FROM `pms_attr` WHERE attr_id IN(?) AND search_type = 1
+         */
+        return baseMapper.selectSearchAttrIds(attrIds);
     }
 
 }
